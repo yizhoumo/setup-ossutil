@@ -1,10 +1,23 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Setup OSSUTIL'
+description: 'Download and config Alibaba Cloud OSSUTIL'
+author: 'Rimo'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  ossutil-version:
+    description: 'The OSSUTIL version to download and use'
+    required: false
+    default: '1.6.10'
+  endpoint:
+    description: 'The endpoint of your bucket'
+    required: true
+  access-key-id:
+    description: 'The AccessKeyID of the credentials'
+    required: true
+  access-key-secret:
+    description: 'The AccessKeySecret of the credentials'
+    required: true
+  sts-token:
+    description: 'The STS Token of the credentials'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
