@@ -4167,20 +4167,23 @@ function run() {
             yield installer.getOssutil(version);
             core.info('ossutil is successfully installed');
             // config
-            const endpoint = core.getInput('endpoint');
-            const accessKeyId = core.getInput('access-key-id');
-            const accessKeySecret = core.getInput('access-key-secret');
+            const inputOptions = { required: true };
+            const endpoint = core.getInput('endpoint', inputOptions);
+            const accessKeyId = core.getInput('access-key-id', inputOptions);
+            const accessKeySecret = core.getInput('access-key-secret', inputOptions);
             const stsToken = core.getInput('sts-token');
             const args = [
+                'config',
                 '--endpoint',
                 endpoint,
                 '--access-key-id',
                 accessKeyId,
                 '--access-key-secret',
-                accessKeySecret,
-                '--sts-token',
-                stsToken
+                accessKeySecret
             ];
+            if (stsToken) {
+                args.push('--sts-token', stsToken);
+            }
             const exitCode = yield exec.exec('ossutil', args);
             if (exitCode === 0) {
                 core.info('ossutil config is done');
