@@ -7,6 +7,7 @@ async function run(): Promise<void> {
     // download
     const version = core.getInput('ossutil-version')
     await installer.getOssutil(version)
+    core.info('ossutil is successfully installed')
 
     // config
     const endpoint = core.getInput('endpoint')
@@ -23,7 +24,10 @@ async function run(): Promise<void> {
       '--sts-token',
       stsToken
     ]
-    await exec.exec('ossutil', args)
+    const exitCode = await exec.exec('ossutil', args)
+    if (exitCode === 0) {
+      core.info('ossutil config is done')
+    }
   } catch (error) {
     core.setFailed(error.message)
   }

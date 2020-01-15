@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as path from 'path'
+import * as fs from 'fs'
 
 const TOOL_NAME = 'ossutil'
 
@@ -15,7 +16,7 @@ export async function getOssutil(version: string): Promise<void> {
     toolPath = await acquireOssutil(version)
   }
 
-  core.info(`ossutil is cached under ${toolPath}`)
+  core.debug(`ossutil is cached under ${toolPath}`)
   core.addPath(toolPath)
 }
 
@@ -44,6 +45,7 @@ async function acquireOssutil(version: string): Promise<string> {
     toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe')
     core.debug(`ossutil extracted to: ${toolFile}`)
   }
+  fs.chmodSync(toolFile, 0o755)
 
   // cache
   const fileName = process.platform === 'win32' ? 'ossutil.exe' : 'ossutil'

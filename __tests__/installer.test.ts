@@ -12,16 +12,18 @@ import * as installer from '../src/installer'
 
 const FILE_NAME = process.platform === 'win32' ? 'ossutil.exe' : 'ossutil'
 
+jest.setTimeout(60000)
+
 describe('installer tests', () => {
   beforeAll(async () => {
     await io.rmRF(TOOL_DIR)
     await io.rmRF(TEMP_DIR)
-  }, 60000)
+  })
 
   afterAll(async () => {
     await io.rmRF(TOOL_DIR)
     await io.rmRF(TEMP_DIR)
-  }, 60000)
+  })
 
   it('install ossutil 1.6.10', async () => {
     const version = '1.6.10'
@@ -32,7 +34,9 @@ describe('installer tests', () => {
 
     const exist = fs.existsSync(path.join(ossutilDir, FILE_NAME))
     expect(exist).toBe(true)
-  }, 60000)
+
+    expect(await io.which('ossutil', true)).toBeTruthy()
+  })
 
   it('throw if wrong version', async () => {
     let thrown = false

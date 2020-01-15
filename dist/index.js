@@ -4013,6 +4013,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const tc = __importStar(__webpack_require__(533));
 const path = __importStar(__webpack_require__(622));
+const fs = __importStar(__webpack_require__(747));
 const TOOL_NAME = 'ossutil';
 /**
  * Get ossutil ready for use
@@ -4025,7 +4026,7 @@ function getOssutil(version) {
             // download, extract, cache
             toolPath = yield acquireOssutil(version);
         }
-        core.info(`ossutil is cached under ${toolPath}`);
+        core.debug(`ossutil is cached under ${toolPath}`);
         core.addPath(toolPath);
     });
 }
@@ -4056,6 +4057,7 @@ function acquireOssutil(version) {
             toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe');
             core.debug(`ossutil extracted to: ${toolFile}`);
         }
+        fs.chmodSync(toolFile, 0o755);
         // cache
         const fileName = process.platform === 'win32' ? 'ossutil.exe' : 'ossutil';
         const toolPath = yield tc.cacheFile(toolFile, fileName, TOOL_NAME, version);
@@ -4163,6 +4165,7 @@ function run() {
             // download
             const version = core.getInput('ossutil-version');
             yield installer.getOssutil(version);
+            core.info('ossutil is successfully installed');
             // config
             const endpoint = core.getInput('endpoint');
             const accessKeyId = core.getInput('access-key-id');
@@ -4178,7 +4181,10 @@ function run() {
                 '--sts-token',
                 stsToken
             ];
-            yield exec.exec('ossutil', args);
+            const exitCode = yield exec.exec('ossutil', args);
+            if (exitCode === 0) {
+                core.info('ossutil config is done');
+            }
         }
         catch (error) {
             core.setFailed(error.message);
