@@ -1,4 +1,4 @@
-name: 'Setup OSSUTIL'
+name: 'Setup OSSUTIL environment'
 description: 'Download and config Alibaba Cloud OSSUTIL'
 author: 'Rimo'
 inputs:
