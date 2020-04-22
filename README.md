@@ -16,7 +16,7 @@ steps:
 - uses: actions/checkout@v1
 - uses: yizhoumo/setup-ossutil@v1
   with:
-    ossutil-version: '1.6.10' # Optional
+    ossutil-version: '1.6.11' # Optional, default to '1.6.11'
     endpoint: ${{ secrets.OSS_ENDPOINT }}
     access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
     access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}

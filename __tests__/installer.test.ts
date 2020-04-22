@@ -25,8 +25,8 @@ describe('installer tests', () => {
     await io.rmRF(TEMP_DIR)
   })
 
-  it('install ossutil 1.6.10', async () => {
-    const version = '1.6.10'
+  it('install ossutil 1.6.11', async () => {
+    const version = '1.6.11'
     await installer.getOssutil(version)
 
     const ossutilDir = path.join(TOOL_DIR, 'ossutil', version, process.arch)
