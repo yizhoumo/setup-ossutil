@@ -27,4 +27,5 @@ jobs:
         access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
         access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
     - run: ossutil -v
-    - run: ossutil ls
+    - run: ossutil ls > /dev/null
+      shell: bash
