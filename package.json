@@ -1,6 +1,6 @@
 {
   "name": "setup-ossutil",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": true,
   "description": "setup ossutil action",
   "main": "lib/setup-ossutil.js",
