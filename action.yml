@@ -19,7 +19,7 @@ inputs:
     description: 'The STS Token of the credentials'
     required: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 branding:
   icon: 'download-cloud'
