@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as fs from 'fs'
-import { HttpClient } from '@actions/http-client'
+import {HttpClient} from '@actions/http-client'
 
 const ToolName = 'ossutil'
 const UpdateEndpoint =
