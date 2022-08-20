@@ -1,55 +1,54 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import * as path from 'path'
 import * as fs from 'fs'
+import {HttpClient} from '@actions/http-client'
 
-const TOOL_NAME = 'ossutil'
+const ToolName = 'ossutil'
+const UpdateEndpoint =
+  'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com'
 
 /**
  * Get ossutil ready for use
  * @param version the version of ossutil
  */
 export async function getOssutil(version: string): Promise<void> {
-  let toolPath = tc.find(TOOL_NAME, version)
-  if (!toolPath) {
-    // download, extract, cache
-    toolPath = await acquireOssutil(version)
+  if (version.toLowerCase() === 'latest') {
+    version = await getLatestVersion()
+    core.info(`Using the latest version of ossutil: ${version}`)
   }
 
-  core.debug(`ossutil is cached under ${toolPath}`)
+  let toolPath = tc.find(ToolName, version)
+  if (!toolPath) {
+    toolPath = await downloadOssutil(version)
+  }
+
   core.addPath(toolPath)
 }
 
 /**
- * Acquire ossutil and install it into the tool cache
- * @param version the version of ossutil to acquire
+ * Download ossutil and install it into the tool cache
+ * @param version the version of ossutil to download
  * @returns the path to the tool directory
  */
-async function acquireOssutil(version: string): Promise<string> {
+async function downloadOssutil(version: string): Promise<string> {
   // download
-  let downloadFile: string
+  let toolFile: string
   try {
     const downloadUrl = getDownloadUrl(version)
     core.info(`Downloading ossutil from: ${downloadUrl}`)
-    downloadFile = await tc.downloadTool(downloadUrl)
+    toolFile = await tc.downloadTool(downloadUrl)
   } catch (error) {
-    core.error(error)
-    throw new Error('Failed to download ossutil')
+    core.error('Failed to download ossutil')
+    throw error
   }
-  core.debug(`ossutil downloaded to: ${downloadFile}`)
+  core.debug(`ossutil downloaded to: ${toolFile}`)
 
-  // extract (if needed)
-  let toolFile = downloadFile
-  if (process.platform === 'win32') {
-    const extractFolder = await tc.extractZip(downloadFile)
-    toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe')
-    core.debug(`ossutil extracted to: ${toolFile}`)
-  }
+  // change permission
   fs.chmodSync(toolFile, 0o755)
 
   // cache
-  const fileName = process.platform === 'win32' ? 'ossutil.exe' : 'ossutil'
-  const toolPath = await tc.cacheFile(toolFile, fileName, TOOL_NAME, version)
+  const fileName = process.platform === 'win32' ? `${ToolName}.exe` : ToolName
+  const toolPath = await tc.cacheFile(toolFile, fileName, ToolName, version)
   core.debug(`ossutil cached to: ${toolPath}`)
   return toolPath
 }
@@ -60,14 +59,13 @@ async function acquireOssutil(version: string): Promise<string> {
  * @returns the URL
  */
 function getDownloadUrl(version: string): string {
-  let downloadUrl = `http://gosspublic.alicdn.com/ossutil/${version}/`
-
+  let downloadUrl = `${UpdateEndpoint}/${version}/`
   switch (process.platform) {
     case 'linux':
       downloadUrl += 'ossutil64'
       break
     case 'win32':
-      downloadUrl += 'ossutil64.zip'
+      downloadUrl += 'ossutil64.exe'
       break
     case 'darwin':
       downloadUrl += 'ossutilmac64'
@@ -77,4 +75,15 @@ function getDownloadUrl(version: string): string {
   }
 
   return downloadUrl
+}
+
+/**
+ * Get the latest version of ossutil
+ * @returns the latest version
+ */
+async function getLatestVersion(): Promise<string> {
+  const http = new HttpClient()
+  const response = await http.get(`${UpdateEndpoint}/ossutilversion`)
+  const content = await response.readBody()
+  return content.trim()
 }
