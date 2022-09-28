@@ -21,15 +21,11 @@ describe('installer tests', () => {
     await io.rmRF(TEMP_DIR)
   })
 
-  const versions = ['1.7.0', 'latest']
+  const versions = ['1.7.14', 'latest']
 
   it.each(versions)('install ossutil %s', async version => {
     await installer.getOssutil(version)
 
     expect(await io.which('ossutil', true)).toBeTruthy()
-  })
-
-  it('throw if wrong version', async () => {
-    await expect(installer.getOssutil('1000.0.0')).rejects.toThrowError()
   })
 })
