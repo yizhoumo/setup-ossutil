@@ -7,10 +7,10 @@ const ToolName = 'ossutil'
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
 
 /**
- * Get ossutil ready for use
+ * Install ossutil to PATH
  * @param version the version of ossutil
  */
-export async function getOssutil(version: string): Promise<void> {
+export async function installOssutil(version: string): Promise<void> {
   if (version.toLowerCase() === 'latest') {
     version = await getLatestVersion()
     core.info(`Using the latest version of ossutil: ${version}`)

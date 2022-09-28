@@ -39,7 +39,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOssutil = void 0;
+exports.installOssutil = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const tc = __importStar(__nccwpck_require__(7784));
@@ -47,10 +47,10 @@ const fs = __importStar(__nccwpck_require__(5747));
 const ToolName = 'ossutil';
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil';
 /**
- * Get ossutil ready for use
+ * Install ossutil to PATH
  * @param version the version of ossutil
  */
-function getOssutil(version) {
+function installOssutil(version) {
     return __awaiter(this, void 0, void 0, function* () {
         if (version.toLowerCase() === 'latest') {
             version = yield getLatestVersion();
@@ -63,7 +63,7 @@ function getOssutil(version) {
         core.addPath(toolPath);
     });
 }
-exports.getOssutil = getOssutil;
+exports.installOssutil = installOssutil;
 /**
  * Download ossutil and install it into the tool cache
  * @param version the version of ossutil to download
@@ -185,7 +185,7 @@ function run() {
         try {
             // download
             const version = core.getInput('ossutil-version');
-            yield installer.getOssutil(version);
+            yield installer.installOssutil(version);
             core.info('ossutil is successfully installed');
             // config
             const inputOptions = { required: true };
