@@ -1,0 +1,28 @@
+name: "build"
+on: # rebuild any PRs and main branch changes
+  pull_request:
+    branches: [ "master" ]
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build: # make sure build/ci work properly
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - run: npm ci
+    - run: npm run all
+    - name: Compare the expected and actual dist
+      run: |
+        if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+          echo "Detected uncommitted changes after build.  See status below:"
+          git diff
+          exit 1
+        fi
+      id: diff
+    - name: upload the expected dist
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() && steps.diff.conclusion == 'failure' }}
+      with:
+        name: dist
+        path: dist/
