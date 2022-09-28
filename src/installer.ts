@@ -1,7 +1,9 @@
 import * as core from '@actions/core'
+import * as io from '@actions/io'
 import * as github from '@actions/github'
 import * as tc from '@actions/tool-cache'
 import * as fs from 'fs'
+import * as path from 'path'
 
 const ToolName = 'ossutil'
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
@@ -42,6 +44,15 @@ async function downloadOssutil(version: string): Promise<string> {
   }
   core.debug(`ossutil downloaded to: ${toolFile}`)
 
+  // extract (if needed)
+  if (process.platform === 'win32') {
+    const zipFile = `${toolFile}.zip`
+    await io.mv(toolFile, zipFile)
+    const extractFolder = await tc.extractZip(zipFile)
+    toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe')
+    core.debug(`ossutil extracted to: ${toolFile}`)
+  }
+
   // change permission
   fs.chmodSync(toolFile, 0o755)
 
@@ -64,7 +75,7 @@ function getDownloadUrl(version: string): string {
       downloadUrl += 'ossutil64'
       break
     case 'win32':
-      downloadUrl += 'ossutil64.exe'
+      downloadUrl += 'ossutil64.zip'
       break
     case 'darwin':
       downloadUrl += 'ossutilmac64'

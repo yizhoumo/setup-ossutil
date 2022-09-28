@@ -41,9 +41,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.installOssutil = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const io = __importStar(__nccwpck_require__(7436));
 const github = __importStar(__nccwpck_require__(5438));
 const tc = __importStar(__nccwpck_require__(7784));
 const fs = __importStar(__nccwpck_require__(5747));
+const path = __importStar(__nccwpck_require__(5622));
 const ToolName = 'ossutil';
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil';
 /**
@@ -83,6 +85,14 @@ function downloadOssutil(version) {
             throw error;
         }
         core.debug(`ossutil downloaded to: ${toolFile}`);
+        // extract (if needed)
+        if (process.platform === 'win32') {
+            const zipFile = `${toolFile}.zip`;
+            yield io.mv(toolFile, zipFile);
+            const extractFolder = yield tc.extractZip(zipFile);
+            toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe');
+            core.debug(`ossutil extracted to: ${toolFile}`);
+        }
         // change permission
         fs.chmodSync(toolFile, 0o755);
         // cache
@@ -104,7 +114,7 @@ function getDownloadUrl(version) {
             downloadUrl += 'ossutil64';
             break;
         case 'win32':
-            downloadUrl += 'ossutil64.exe';
+            downloadUrl += 'ossutil64.zip';
             break;
         case 'darwin':
             downloadUrl += 'ossutilmac64';
