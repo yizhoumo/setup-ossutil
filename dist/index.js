@@ -45,7 +45,8 @@ const tc = __importStar(__nccwpck_require__(7784));
 const fs = __importStar(__nccwpck_require__(5747));
 const http_client_1 = __nccwpck_require__(6255);
 const ToolName = 'ossutil';
-const UpdateEndpoint = 'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com';
+const UpdateUrl = 'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com/ossutilversion';
+const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil';
 /**
  * Get ossutil ready for use
  * @param version the version of ossutil
@@ -98,7 +99,7 @@ function downloadOssutil(version) {
  * @returns the URL
  */
 function getDownloadUrl(version) {
-    let downloadUrl = `${UpdateEndpoint}/${version}/`;
+    let downloadUrl = `${DownloadEndpoint}/${version}/`;
     switch (process.platform) {
         case 'linux':
             downloadUrl += 'ossutil64';
@@ -120,8 +121,11 @@ function getDownloadUrl(version) {
  */
 function getLatestVersion() {
     return __awaiter(this, void 0, void 0, function* () {
-        const http = new http_client_1.HttpClient();
-        const response = yield http.get(`${UpdateEndpoint}/ossutilversion`);
+        const http = new http_client_1.HttpClient('setup-ossutil', [], {
+            allowRetries: true,
+            maxRetries: 5
+        });
+        const response = yield http.get(UpdateUrl);
         const content = yield response.readBody();
         return content.trim();
     });

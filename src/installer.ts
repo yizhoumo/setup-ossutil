@@ -4,8 +4,9 @@ import * as fs from 'fs'
 import {HttpClient} from '@actions/http-client'
 
 const ToolName = 'ossutil'
-const UpdateEndpoint =
-  'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com'
+const UpdateUrl =
+  'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com/ossutilversion'
+const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
 
 /**
  * Get ossutil ready for use
@@ -59,7 +60,7 @@ async function downloadOssutil(version: string): Promise<string> {
  * @returns the URL
  */
 function getDownloadUrl(version: string): string {
-  let downloadUrl = `${UpdateEndpoint}/${version}/`
+  let downloadUrl = `${DownloadEndpoint}/${version}/`
   switch (process.platform) {
     case 'linux':
       downloadUrl += 'ossutil64'
@@ -82,8 +83,11 @@ function getDownloadUrl(version: string): string {
  * @returns the latest version
  */
 async function getLatestVersion(): Promise<string> {
-  const http = new HttpClient()
-  const response = await http.get(`${UpdateEndpoint}/ossutilversion`)
+  const http = new HttpClient('setup-ossutil', [], {
+    allowRetries: true,
+    maxRetries: 5
+  })
+  const response = await http.get(UpdateUrl)
   const content = await response.readBody()
   return content.trim()
 }
