@@ -16,10 +16,11 @@ steps:
 - uses: actions/checkout@v1
 - uses: yizhoumo/setup-ossutil@v1
   with:
-    ossutil-version: '1.7.14' # Optional, default to '1.7.14'. Use 'latest' to get the latest version.
     endpoint: ${{ secrets.OSS_ENDPOINT }}
     access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
     access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+    sts-token: ${{ secrets.OSS_STS_TOKEN }} # Optional
+    ossutil-version: '1.7.14' # Optional, default to '1.7.14'. Use 'latest' to get the latest version.
 - run: ossutil cp -f file-to-upload.txt oss://your-bucket/path
 ```
 

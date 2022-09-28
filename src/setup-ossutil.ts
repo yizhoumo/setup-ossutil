@@ -6,7 +6,7 @@ async function run(): Promise<void> {
   try {
     // download
     const version = core.getInput('ossutil-version')
-    await installer.getOssutil(version)
+    await installer.installOssutil(version)
     core.info('ossutil is successfully installed')
 
     // config

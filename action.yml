@@ -2,22 +2,26 @@ name: 'Setup OSSUTIL environment'
 description: 'Download and config Alibaba Cloud OSSUTIL'
 author: 'Rimo'
 inputs:
-  ossutil-version:
-    description: 'The OSSUTIL version to download and use'
-    required: false
-    default: '1.7.14'
   endpoint:
     description: 'The endpoint of your bucket'
     required: true
   access-key-id:
-    description: 'The AccessKeyID of the credentials'
+    description: 'The AccessKey ID of the credentials'
     required: true
   access-key-secret:
-    description: 'The AccessKeySecret of the credentials'
+    description: 'The AccessKey Secret of the credentials'
     required: true
   sts-token:
     description: 'The STS Token of the credentials'
     required: false
+  ossutil-version:
+    description: 'The OSSUTIL version to download and use'
+    required: false
+    default: '1.7.14'
+  github-token:
+    description: 'The GitHub token used to call API to fetch the latest version info'
+    required: false
+    default: ${{ github.token }}
 runs:
   using: 'node16'
   main: 'dist/index.js'

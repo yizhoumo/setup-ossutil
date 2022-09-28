@@ -1,18 +1,16 @@
 import * as core from '@actions/core'
+import * as github from '@actions/github'
 import * as tc from '@actions/tool-cache'
 import * as fs from 'fs'
-import {HttpClient} from '@actions/http-client'
 
 const ToolName = 'ossutil'
-const UpdateUrl =
-  'https://ossutil-version-update.oss-cn-hangzhou.aliyuncs.com/ossutilversion'
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
 
 /**
- * Get ossutil ready for use
+ * Install ossutil to PATH
  * @param version the version of ossutil
  */
-export async function getOssutil(version: string): Promise<void> {
+export async function installOssutil(version: string): Promise<void> {
   if (version.toLowerCase() === 'latest') {
     version = await getLatestVersion()
     core.info(`Using the latest version of ossutil: ${version}`)
@@ -83,11 +81,17 @@ function getDownloadUrl(version: string): string {
  * @returns the latest version
  */
 async function getLatestVersion(): Promise<string> {
-  const http = new HttpClient('setup-ossutil', [], {
-    allowRetries: true,
-    maxRetries: 5
+  const token = core.getInput('github-token', {required: true})
+  const octokit = github.getOctokit(token)
+  const response = await octokit.rest.repos.getLatestRelease({
+    owner: 'aliyun',
+    repo: 'ossutil'
   })
-  const response = await http.get(UpdateUrl)
-  const content = await response.readBody()
-  return content.trim()
+
+  const tag = response.data.tag_name.trim()
+  if (tag[0].toLowerCase() === 'v') {
+    return tag.substring(1)
+  } else {
+    return tag
+  }
 }
