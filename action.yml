@@ -5,7 +5,7 @@ inputs:
   ossutil-version:
     description: 'The OSSUTIL version to download and use'
     required: false
-    default: 'latest'
+    default: '1.7.14'
   endpoint:
     description: 'The endpoint of your bucket'
     required: true
