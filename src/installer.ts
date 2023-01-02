@@ -1,84 +1,72 @@
 import * as core from '@actions/core'
-import * as io from '@actions/io'
 import * as github from '@actions/github'
 import * as tc from '@actions/tool-cache'
 import * as fs from 'fs'
-import * as path from 'path'
 
-const ToolName = 'ossutil'
-const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
+const ToolName = 'coscli'
+const DownloadEndpoint = 'https://github.com/tencentyun/coscli/releases/download/'
 
 /**
- * Install ossutil to PATH
- * @param version the version of ossutil
+ * Install coscli to PATH
+ * @param version the version of coscli
  */
-export async function installOssutil(version: string): Promise<void> {
+export async function installCosCli(version: string): Promise<void> {
   if (version.toLowerCase() === 'latest') {
     version = await getLatestVersion()
-    core.info(`Using the latest version of ossutil: ${version}`)
+    core.info(`Using the latest version of coscli: ${version}`)
   }
 
   let toolPath = tc.find(ToolName, version)
   if (!toolPath) {
-    toolPath = await downloadOssutil(version)
+    toolPath = await downloadCosCli(version)
   }
 
   core.addPath(toolPath)
 }
 
 /**
- * Download ossutil and install it into the tool cache
- * @param version the version of ossutil to download
+ * Download coscli and install it into the tool cache
+ * @param version the version of coscli to download
  * @returns the path to the tool directory
  */
-async function downloadOssutil(version: string): Promise<string> {
+async function downloadCosCli(version: string): Promise<string> {
   // download
   let toolFile: string
   try {
     const downloadUrl = getDownloadUrl(version)
-    core.info(`Downloading ossutil from: ${downloadUrl}`)
+    core.info(`Downloading coscli from: ${downloadUrl}`)
     toolFile = await tc.downloadTool(downloadUrl)
   } catch (error) {
-    core.error('Failed to download ossutil')
+    core.error('Failed to download coscli')
     throw error
   }
-  core.debug(`ossutil downloaded to: ${toolFile}`)
-
-  // extract (if needed)
-  if (process.platform === 'win32') {
-    const zipFile = `${toolFile}.zip`
-    await io.mv(toolFile, zipFile)
-    const extractFolder = await tc.extractZip(zipFile)
-    toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe')
-    core.debug(`ossutil extracted to: ${toolFile}`)
-  }
+  core.debug(`coscli downloaded to: ${toolFile}`)
 
   // change permission
   fs.chmodSync(toolFile, 0o755)
 
   // cache
-  const fileName = process.platform === 'win32' ? `${ToolName}.exe` : ToolName
-  const toolPath = await tc.cacheFile(toolFile, fileName, ToolName, version)
-  core.debug(`ossutil cached to: ${toolPath}`)
+  const toolPath = await tc.cacheFile(toolFile, ToolName, ToolName, version)
+  core.debug(`coscli cached to: ${toolPath}`)
   return toolPath
 }
 
 /**
- * Get the URL of the specific version of ossutil
- * @param version the version of ossutil to download
+ * Get the URL of the specific version of coscli
+ * @param version the version of coscli to download
  * @returns the URL
  */
 function getDownloadUrl(version: string): string {
   let downloadUrl = `${DownloadEndpoint}/${version}/`
   switch (process.platform) {
     case 'linux':
-      downloadUrl += 'ossutil64'
+      downloadUrl += 'coscli-linux'
       break
     case 'win32':
-      downloadUrl += 'ossutil64.zip'
+      downloadUrl += 'coscli-windows.exe'
       break
     case 'darwin':
-      downloadUrl += 'ossutilmac64'
+      downloadUrl += 'coscli-mac'
       break
     default:
       throw new Error(`Unknown platform ${process.platform}`)
@@ -88,21 +76,17 @@ function getDownloadUrl(version: string): string {
 }
 
 /**
- * Get the latest version of ossutil
+ * Get the latest version of coscli
  * @returns the latest version
  */
 async function getLatestVersion(): Promise<string> {
   const token = core.getInput('github-token', {required: true})
   const octokit = github.getOctokit(token)
   const response = await octokit.rest.repos.getLatestRelease({
-    owner: 'aliyun',
-    repo: 'ossutil'
+    owner: 'tencentyun',
+    repo: 'coscli'
   })
 
   const tag = response.data.tag_name.trim()
-  if (tag[0].toLowerCase() === 'v') {
-    return tag.substring(1)
-  } else {
-    return tag
-  }
+  return tag
 }

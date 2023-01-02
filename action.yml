@@ -1,23 +1,23 @@
-name: 'Setup OSSUTIL environment'
-description: 'Download and config Alibaba Cloud OSSUTIL'
-author: 'Rimo'
+name: 'Setup coscli environment'
+description: 'Download and config Tencent Cloud coscli'
+author: 'git9527'
 inputs:
-  endpoint:
-    description: 'The endpoint of your bucket'
+  region:
+    description: 'The region of your bucket'
     required: true
-  access-key-id:
-    description: 'The AccessKey ID of the credentials'
+  secret-id:
+    description: 'The Secret ID of the credentials'
     required: true
-  access-key-secret:
-    description: 'The AccessKey Secret of the credentials'
+  secret-key:
+    description: 'The Secret Key of the credentials'
     required: true
-  sts-token:
-    description: 'The STS Token of the credentials'
+  session-token:
+    description: 'The Session Token of the credentials, Optional'
     required: false
-  ossutil-version:
-    description: 'The OSSUTIL version to download and use'
+  coscli-version:
+    description: 'The coscli version to download and use'
     required: false
-    default: '1.7.14'
+    default: 'v0.12.0-beta'
   github-token:
     description: 'The GitHub token used to call API to fetch the latest version info'
     required: false

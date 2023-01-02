@@ -5,9 +5,9 @@ import * as installer from './installer'
 async function run(): Promise<void> {
   try {
     // download
-    const version = core.getInput('ossutil-version')
-    await installer.installOssutil(version)
-    core.info('ossutil is successfully installed')
+    const version = core.getInput('coscli-version')
+    await installer.installCosCli(version)
+    core.info('coscli is successfully installed')
 
     // config
     const inputOptions: core.InputOptions = {required: true}
@@ -27,9 +27,9 @@ async function run(): Promise<void> {
     if (stsToken) {
       args.push('--sts-token', stsToken)
     }
-    const exitCode = await exec.exec('ossutil', args)
+    const exitCode = await exec.exec('coscli', args)
     if (exitCode === 0) {
-      core.info('ossutil config is done')
+      core.info('coscli config is done')
     }
   } catch (error) {
     if (error instanceof Error) {

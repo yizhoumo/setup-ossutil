@@ -1,12 +1,12 @@
-# setup-ossutil
+# setup-coscli
 
-[![build](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml)
-[![test](https://github.com/yizhoumo/setup-ossutil/actions/workflows/test.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/test.yml)
+[![build](https://github.com/git9527/setup-coscli/actions/workflows/build.yml/badge.svg)](https://github.com/git9527/setup-coscli/actions/workflows/build.yml)
+[![test](https://github.com/git9527/setup-coscli/actions/workflows/test.yml/badge.svg)](https://github.com/git9527/setup-coscli/actions/workflows/test.yml)
 
-This action sets up [Alibaba Cloud OSSUTIL](https://github.com/aliyun/ossutil) for use in actions by:
+This action sets up [Tencent Cloud COSCLI](https://cloud.tencent.com/document/product/436/63144) for use in actions by:
 
-- downloading and caching ossutil by version and adding to PATH
-- configuring ossutil with your credentials
+- downloading and caching coscli by version and adding to PATH
+- configuring coscli with your credentials
 
 ## Usage
 
@@ -15,17 +15,17 @@ See [action.yml](action.yml)
 ```yaml
 steps:
 - uses: actions/checkout@v1
-- uses: yizhoumo/setup-ossutil@v1
+- uses: git9527/setup-coscli@v1
   with:
-    endpoint: ${{ secrets.OSS_ENDPOINT }}
-    access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
-    access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-    sts-token: ${{ secrets.OSS_STS_TOKEN }} # Optional
-    ossutil-version: '1.7.14' # Optional, default to '1.7.14'. Use 'latest' to get the latest version.
-- run: ossutil cp -f file-to-upload.txt oss://your-bucket/path
+    region: ${{ secrets.COS_REGION }}
+    secret-id: ${{ secrets.COS_SECRET_ID }}
+    secret-key: ${{ secrets.COS_SECRET_KEY }}
+    session-token: ${{ secrets.COS_TOKEN }}
+    coscli-version: 'v0.12.0-beta' # Optional, default to 'v0.12.0-beta'.  Use 'latest' to get the latest version.
+- run: coscli sync ~/example.txt cos://bucket1/example.txt
 ```
 
-See also: [Document of ossutil](https://help.aliyun.com/document_detail/50452.html)
+See also: [Document of coscli](https://cloud.tencent.com/document/product/436/63143)
 
 ## License
 
