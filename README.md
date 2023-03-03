@@ -1,7 +1,7 @@
 # setup-ossutil
 
 [![build](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml)
-[![test](https://github.com/yizhoumo/setup-ossutil/actions/workflows/test.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/test.yml)
+[![functional](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml)
 
 This action sets up [Alibaba Cloud OSSUTIL](https://github.com/aliyun/ossutil) for use in actions by:
 
