@@ -1,22 +1,17 @@
-name: "test"
+name: "functional"
 on:
-  pull_request:
-    branches: [ "master" ]
-  push:
-    branches: [ "master" ]
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 2 * * 6'
 
 jobs:
-  test: # make sure the action works on a clean machine without building
+  functional:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         version: [1.7.0, 1.7.14, latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./
+    - uses: yizhoumo/setup-ossutil@v1
       with:
         ossutil-version: ${{ matrix.version }}
         endpoint: ${{ secrets.OSS_ENDPOINT }}
