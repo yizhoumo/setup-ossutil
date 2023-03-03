@@ -26,3 +26,21 @@ jobs:
       with:
         name: dist
         path: dist/
+
+  test: # make sure the action works on a clean machine without building
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        version: [1.7.0, 1.7.14, latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ./
+      with:
+        ossutil-version: ${{ matrix.version }}
+        endpoint: ${{ secrets.OSS_ENDPOINT }}
+        access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
+        access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+    - run: ossutil -v
+    - run: ossutil ls > /dev/null
+      shell: bash
