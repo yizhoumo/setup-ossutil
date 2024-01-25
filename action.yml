@@ -22,7 +22,7 @@ inputs:
     description: 'The STS Token of the credentials'
     required: false
   ossutil-version:
-    description: 'The OSSUTIL version to download and use'
+    description: 'The OSSUTIL version to download and use, or "latest" for the latest version.'
     required: false
     default: '1.7.14'
   github-token:

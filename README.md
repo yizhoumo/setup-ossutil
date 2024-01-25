@@ -1,9 +1,10 @@
 # setup-ossutil
 
-[![build](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/build.yml)
-[![functional](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml)
+[![Continuous Integration](https://github.com/yizhoumo/setup-ossutil/actions/workflows/ci.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/ci.yml)
+[![Functional](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml/badge.svg)](https://github.com/yizhoumo/setup-ossutil/actions/workflows/functional.yml)
 
-This action sets up [Alibaba Cloud OSSUTIL](https://github.com/aliyun/ossutil) for use in actions by:
+This action sets up [Alibaba Cloud OSSUTIL](https://github.com/aliyun/ossutil)
+for use in actions by:
 
 - downloading and caching ossutil by version and adding to PATH
 - configuring ossutil with your credentials
@@ -21,7 +22,7 @@ steps:
     access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
     access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
     sts-token: ${{ secrets.OSS_STS_TOKEN }} # Optional
-    ossutil-version: '1.7.14' # Optional, default to '1.7.14'. Use 'latest' to get the latest version.
+    ossutil-version: '1.7.14' # Optional. Use 'latest' for the latest version.
 - run: ossutil cp -f file-to-upload.txt oss://your-bucket/path
 ```
 
