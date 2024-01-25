@@ -1,6 +1,13 @@
 name: 'Setup OSSUTIL environment'
 description: 'Download and config Alibaba Cloud OSSUTIL'
 author: 'Rimo'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'download-cloud'
+  color: 'orange'
+
+# Define your inputs here.
 inputs:
   endpoint:
     description: 'The endpoint of your bucket'
@@ -22,9 +29,10 @@ inputs:
     description: 'The GitHub token used to call API to fetch the latest version info'
     required: false
     default: ${{ github.token }}
+
+# Define your outputs here.
+outputs:
+
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
-branding:
-  icon: 'download-cloud'
-  color: 'orange'
+  using: node20
+  main: dist/index.js

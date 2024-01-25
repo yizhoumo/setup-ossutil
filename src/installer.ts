@@ -92,7 +92,7 @@ function getDownloadUrl(version: string): string {
  * @returns the latest version
  */
 async function getLatestVersion(): Promise<string> {
-  const token = core.getInput('github-token', {required: true})
+  const token = core.getInput('github-token', { required: true })
   const octokit = github.getOctokit(token)
   const response = await octokit.rest.repos.getLatestRelease({
     owner: 'aliyun',

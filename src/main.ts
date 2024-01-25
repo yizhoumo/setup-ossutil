@@ -2,7 +2,11 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as installer from './installer'
 
-async function run(): Promise<void> {
+/**
+ * The main function for the action.
+ * @returns {Promise<void>} Resolves when the action is complete.
+ */
+export async function run(): Promise<void> {
   try {
     // download
     const version = core.getInput('ossutil-version')
@@ -10,7 +14,7 @@ async function run(): Promise<void> {
     core.info('ossutil is successfully installed')
 
     // config
-    const inputOptions: core.InputOptions = {required: true}
+    const inputOptions: core.InputOptions = { required: true }
     const endpoint = core.getInput('endpoint', inputOptions)
     const accessKeyId = core.getInput('access-key-id', inputOptions)
     const accessKeySecret = core.getInput('access-key-secret', inputOptions)
@@ -32,10 +36,7 @@ async function run(): Promise<void> {
       core.info('ossutil config is done')
     }
   } catch (error) {
-    if (error instanceof Error) {
-      core.setFailed(error.message)
-    }
+    // Fail the workflow run if an error occurs
+    if (error instanceof Error) core.setFailed(error.message)
   }
 }
-
-run()
