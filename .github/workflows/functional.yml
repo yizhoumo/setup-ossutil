@@ -1,4 +1,4 @@
-name: "functional"
+name: Functional
 on:
   schedule:
     - cron: '0 2 * * 6'
@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        version: [1.7.0, 1.7.14, latest]
+        version: [1.7.15, latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: yizhoumo/setup-ossutil@v1
+    - uses: yizhoumo/setup-ossutil@v2
       with:
         ossutil-version: ${{ matrix.version }}
         endpoint: ${{ secrets.OSS_ENDPOINT }}
