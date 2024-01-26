@@ -8,8 +8,8 @@ import * as installer from './installer'
  */
 export async function run(): Promise<void> {
   try {
-    install()
-    config()
+    await install()
+    await config()
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

@@ -32806,6 +32806,7 @@ const fs = __importStar(__nccwpck_require__(7147));
 const path = __importStar(__nccwpck_require__(1017));
 const ToolName = 'ossutil';
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil';
+const IS_WINDOWS = process.platform === 'win32';
 /**
  * Install ossutil to PATH
  * @param version the version of ossutil
@@ -32829,54 +32830,70 @@ exports.installOssutil = installOssutil;
  */
 async function downloadOssutil(version) {
     // download
-    let toolFile;
+    const downloadFileName = getDownloadFileName(version);
+    let downloadedFile;
     try {
-        const downloadUrl = getDownloadUrl(version);
+        const downloadUrl = `${DownloadEndpoint}/${version}/${downloadFileName}.zip`;
         core.info(`Downloading ossutil from: ${downloadUrl}`);
-        toolFile = await tc.downloadTool(downloadUrl);
+        downloadedFile = await tc.downloadTool(downloadUrl);
     }
     catch (error) {
         core.error('Failed to download ossutil');
         throw error;
     }
-    core.debug(`ossutil downloaded to: ${toolFile}`);
-    // extract (if needed)
-    if (process.platform === 'win32') {
-        const zipFile = `${toolFile}.zip`;
-        await io.mv(toolFile, zipFile);
-        const extractFolder = await tc.extractZip(zipFile);
-        toolFile = path.join(extractFolder, 'ossutil64', 'ossutil64.exe');
-        core.debug(`ossutil extracted to: ${toolFile}`);
+    core.info(`ossutil downloaded to: ${downloadedFile}`);
+    // extract
+    const zipFile = `${downloadedFile}.zip`;
+    await io.mv(downloadedFile, zipFile);
+    const extractFolder = await tc.extractZip(zipFile);
+    const toolFileName = IS_WINDOWS ? 'ossutil64.exe' : 'ossutil64';
+    const toolFile = path.join(extractFolder, downloadFileName, toolFileName);
+    if (fs.existsSync(toolFile)) {
+        core.info(`ossutil extracted to: ${toolFile}`);
+    }
+    else {
+        throw new Error('Unrecognized zip file structure');
     }
     // change permission
     fs.chmodSync(toolFile, 0o755);
     // cache
-    const fileName = process.platform === 'win32' ? `${ToolName}.exe` : ToolName;
-    const toolPath = await tc.cacheFile(toolFile, fileName, ToolName, version);
-    core.debug(`ossutil cached to: ${toolPath}`);
+    const cacheFileName = IS_WINDOWS ? `${ToolName}.exe` : ToolName;
+    const toolPath = await tc.cacheFile(toolFile, cacheFileName, ToolName, version);
+    core.info(`ossutil installed to: ${toolPath}`);
     return toolPath;
 }
 /**
- * Get the URL of the specific version of ossutil
+ * Get the file name of the specific version of ossutil
  * @param version the version of ossutil to download
- * @returns the URL
+ * @returns the file name (e.g., ossutil-v1.7.19-linux-amd64)
  */
-function getDownloadUrl(version) {
-    let downloadUrl = `${DownloadEndpoint}/${version}/`;
+function getDownloadFileName(version) {
+    let platform = '';
     switch (process.platform) {
         case 'linux':
-            downloadUrl += 'ossutil64';
+            platform = 'linux';
             break;
         case 'win32':
-            downloadUrl += 'ossutil64.zip';
+            platform = 'windows';
             break;
         case 'darwin':
-            downloadUrl += 'ossutilmac64';
+            platform = 'mac';
             break;
         default:
-            throw new Error(`Unknown platform ${process.platform}`);
+            throw new Error(`Unsupported platform ${process.platform}`);
     }
-    return downloadUrl;
+    let arch = '';
+    switch (process.arch) {
+        case 'arm64':
+            arch = 'arm64';
+            break;
+        case 'x64':
+            arch = 'amd64';
+            break;
+        default:
+            throw new Error(`Unsupported arch ${process.arch}`);
+    }
+    return `ossutil-v${version}-${platform}-${arch}`;
 }
 /**
  * Get the latest version of ossutil
@@ -32940,8 +32957,8 @@ const installer = __importStar(__nccwpck_require__(2574));
  */
 async function run() {
     try {
-        install();
-        config();
+        await install();
+        await config();
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -32957,7 +32974,7 @@ async function install() {
 }
 async function config() {
     const endpoint = core.getInput('endpoint');
-    if (endpoint.length == 0) {
+    if (endpoint.length === 0) {
         core.info('ossutil config is skipped');
         return;
     }
@@ -32981,7 +32998,7 @@ async function config() {
         core.info('ossutil config is done');
     }
     else {
-        core.error('ossutil config is failed with exit code: ' + exitCode);
+        core.error(`ossutil config is failed with exit code: ${exitCode}`);
     }
 }
 
