@@ -32940,32 +32940,8 @@ const installer = __importStar(__nccwpck_require__(2574));
  */
 async function run() {
     try {
-        // download
-        const version = core.getInput('ossutil-version');
-        await installer.installOssutil(version);
-        core.info('ossutil is successfully installed');
-        // config
-        const inputOptions = { required: true };
-        const endpoint = core.getInput('endpoint', inputOptions);
-        const accessKeyId = core.getInput('access-key-id', inputOptions);
-        const accessKeySecret = core.getInput('access-key-secret', inputOptions);
-        const stsToken = core.getInput('sts-token');
-        const args = [
-            'config',
-            '--endpoint',
-            endpoint,
-            '--access-key-id',
-            accessKeyId,
-            '--access-key-secret',
-            accessKeySecret
-        ];
-        if (stsToken) {
-            args.push('--sts-token', stsToken);
-        }
-        const exitCode = await exec.exec('ossutil', args);
-        if (exitCode === 0) {
-            core.info('ossutil config is done');
-        }
+        install();
+        config();
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -32974,6 +32950,40 @@ async function run() {
     }
 }
 exports.run = run;
+async function install() {
+    const version = core.getInput('ossutil-version', { required: true });
+    await installer.installOssutil(version);
+    core.info('ossutil is successfully installed');
+}
+async function config() {
+    const endpoint = core.getInput('endpoint');
+    if (endpoint.length == 0) {
+        core.info('ossutil config is skipped');
+        return;
+    }
+    const accessKeyId = core.getInput('access-key-id', { required: true });
+    const accessKeySecret = core.getInput('access-key-secret', { required: true });
+    const args = [
+        'config',
+        '--endpoint',
+        endpoint,
+        '--access-key-id',
+        accessKeyId,
+        '--access-key-secret',
+        accessKeySecret
+    ];
+    const stsToken = core.getInput('sts-token');
+    if (stsToken) {
+        args.push('--sts-token', stsToken);
+    }
+    const exitCode = await exec.exec('ossutil', args);
+    if (exitCode === 0) {
+        core.info('ossutil config is done');
+    }
+    else {
+        core.error('ossutil config is failed with exit code: ' + exitCode);
+    }
+}
 
 
 /***/ }),
