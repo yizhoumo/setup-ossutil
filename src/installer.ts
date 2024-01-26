@@ -34,10 +34,10 @@ export async function installOssutil(version: string): Promise<void> {
  */
 async function downloadOssutil(version: string): Promise<string> {
   // download
-  const downloadFileName = getDownloadFileName(version)
+  const zipFileName = getZipFileName(version)
   let downloadedFile: string
   try {
-    const downloadUrl = `${DownloadEndpoint}/${version}/${downloadFileName}.zip`
+    const downloadUrl = `${DownloadEndpoint}/${version}/${zipFileName}.zip`
     core.info(`Downloading ossutil from: ${downloadUrl}`)
     downloadedFile = await tc.downloadTool(downloadUrl)
   } catch (error) {
@@ -50,8 +50,8 @@ async function downloadOssutil(version: string): Promise<string> {
   const zipFile = `${downloadedFile}.zip`
   await io.mv(downloadedFile, zipFile)
   const extractFolder = await tc.extractZip(zipFile)
-  const toolFileName = IS_WINDOWS ? 'ossutil64.exe' : 'ossutil64'
-  const toolFile = path.join(extractFolder, downloadFileName, toolFileName)
+  const toolFileName = getToolFileName()
+  const toolFile = path.join(extractFolder, zipFileName, toolFileName)
   if (fs.existsSync(toolFile)) {
     core.info(`ossutil extracted to: ${toolFile}`)
   } else {
@@ -74,11 +74,11 @@ async function downloadOssutil(version: string): Promise<string> {
 }
 
 /**
- * Get the file name of the specific version of ossutil
+ * Get the zip file name of the specific version of ossutil
  * @param version the version of ossutil to download
- * @returns the file name (e.g., ossutil-v1.7.19-linux-amd64)
+ * @returns the zip file name (e.g., ossutil-v1.7.19-linux-amd64)
  */
-function getDownloadFileName(version: string): string {
+function getZipFileName(version: string): string {
   let platform = ''
   switch (process.platform) {
     case 'linux':
@@ -107,6 +107,29 @@ function getDownloadFileName(version: string): string {
   }
 
   return `ossutil-v${version}-${platform}-${arch}`
+}
+
+/**
+ * Get the file name of ossutil
+ * @returns the file name (e.g., ossutil64)
+ */
+function getToolFileName(): string {
+  let filename = 'ossutil'
+  switch (process.platform) {
+    case 'linux':
+      filename += '64'
+      break
+    case 'win32':
+      filename += '64.exe'
+      break
+    case 'darwin':
+      filename += 'mac64'
+      break
+    default:
+      throw new Error(`Unsupported platform ${process.platform}`)
+  }
+
+  return filename
 }
 
 /**
