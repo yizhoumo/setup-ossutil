@@ -25,10 +25,6 @@ inputs:
   sts-token:
     description: 'The STS Token of the credentials'
     required: false
-  github-token:
-    description: 'The GitHub token used to call API to fetch the latest version info'
-    required: false
-    default: ${{ github.token }}
 
 # Define your outputs here.
 outputs: {}

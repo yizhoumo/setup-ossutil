@@ -1,9 +1,9 @@
 import * as core from '@actions/core'
 import * as io from '@actions/io'
-import * as github from '@actions/github'
 import * as tc from '@actions/tool-cache'
 import * as fs from 'fs'
 import * as path from 'path'
+import { HttpClient } from '@actions/http-client'
 
 const ToolName = 'ossutil'
 const DownloadEndpoint = 'https://gosspublic.alicdn.com/ossutil'
@@ -91,7 +91,7 @@ function getZipFileName(version: string): string {
       platform = 'mac'
       break
     default:
-      throw new Error(`Unsupported platform ${process.platform}`)
+      throw new Error(`Unsupported platform: ${process.platform}`)
   }
 
   let arch = ''
@@ -103,7 +103,7 @@ function getZipFileName(version: string): string {
       arch = 'amd64'
       break
     default:
-      throw new Error(`Unsupported arch ${process.arch}`)
+      throw new Error(`Unsupported arch: ${process.arch}`)
   }
 
   return `ossutil-v${version}-${platform}-${arch}`
@@ -126,7 +126,7 @@ function getToolFileName(): string {
       filename += 'mac64'
       break
     default:
-      throw new Error(`Unsupported platform ${process.platform}`)
+      throw new Error(`Unsupported platform: ${process.platform}`)
   }
 
   return filename
@@ -137,17 +137,18 @@ function getToolFileName(): string {
  * @returns the latest version
  */
 async function getLatestVersion(): Promise<string> {
-  const token = core.getInput('github-token', { required: true })
-  const octokit = github.getOctokit(token)
-  const response = await octokit.rest.repos.getLatestRelease({
-    owner: 'aliyun',
-    repo: 'ossutil'
+  const http = new HttpClient('setup-ossutil', [], {
+    allowRetries: true,
+    maxRetries: 5
   })
+  const versionFileUrl = `${DownloadEndpoint}/version.txt`
+  const response = await http.get(versionFileUrl)
+  const content = await response.readBody()
 
-  const tag = response.data.tag_name.trim()
-  if (tag[0].toLowerCase() === 'v') {
-    return tag.substring(1)
+  const versionFilePrefix = 'ossutil version: v'
+  if (content.startsWith(versionFilePrefix)) {
+    return content.substring(versionFilePrefix.length).trim()
   } else {
-    return tag
+    throw new Error(`Unrecognized version file content: ${content}`)
   }
 }

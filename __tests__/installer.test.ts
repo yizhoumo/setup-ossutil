@@ -20,7 +20,7 @@ describe('installer tests', () => {
     await io.rmRF(TEMP_DIR)
   })
 
-  const versions = ['1.7.15', '1.7.18']
+  const versions = ['1.7.15', 'latest']
 
   it.each(versions)('install ossutil %s', async version => {
     await installer.installOssutil(version)
