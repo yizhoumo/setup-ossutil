@@ -12,18 +12,18 @@ inputs:
   ossutil-version:
     description: 'The OSSUTIL version to download and use, or "latest" for the latest version.'
     required: true
-    default: '1.7.14'
+    default: '1.7.18'
   endpoint:
-    description: 'The endpoint of your bucket'
+    description: 'The endpoint of the region in which the bucket is located.'
     required: false
   access-key-id:
-    description: 'The AccessKey ID of the credentials'
+    description: 'The AccessKey ID of the credential.'
     required: false
   access-key-secret:
-    description: 'The AccessKey Secret of the credentials'
+    description: 'The AccessKey Secret of the credential.'
     required: false
   sts-token:
-    description: 'The STS Token of the credentials'
+    description: 'The STS Token of the credential. Only required for STS temporary access credential.'
     required: false
 
 # Define your outputs here.

@@ -1,7 +1,7 @@
 {
   "name": "setup-ossutil",
-  "description": "GitHub Action to setup ossutil",
-  "version": "1.1.3",
+  "description": "Set up your GitHub Actions workflow with a specific version of ossutil.",
+  "version": "2.0.0",
   "author": "Rimo",
   "private": true,
   "homepage": "https://github.com/yizhoumo/setup-ossutil",
