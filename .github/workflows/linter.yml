@@ -31,7 +31,7 @@ jobs:
           cache: npm
 
       - name: Install Dependencies
-        id: npm-ci
+        id: install
         run: npm ci
 
       - name: Lint Codebase
@@ -39,3 +39,4 @@ jobs:
         uses: super-linter/super-linter/slim@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TYPESCRIPT_DEFAULT_STYLE: prettier
