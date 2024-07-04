@@ -28807,7 +28807,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.installOssutil = void 0;
+exports.installOssutil = installOssutil;
 const core = __importStar(__nccwpck_require__(2186));
 const io = __importStar(__nccwpck_require__(7436));
 const tc = __importStar(__nccwpck_require__(7784));
@@ -28832,7 +28832,6 @@ async function installOssutil(version) {
     }
     core.addPath(toolPath);
 }
-exports.installOssutil = installOssutil;
 /**
  * Download ossutil and install it into the tool cache
  * @param version the version of ossutil to download
@@ -28979,7 +28978,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const installer = __importStar(__nccwpck_require__(2574));
@@ -28998,7 +28997,6 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-exports.run = run;
 async function install() {
     const version = core.getInput('ossutil-version', { required: true });
     await installer.installOssutil(version);
